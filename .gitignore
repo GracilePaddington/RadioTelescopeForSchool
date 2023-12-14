@@ -70,3 +70,17 @@ RadioTelescopeProject/.vs/RadioTelescopeProject/v16/Browse.VC.db-shm
 RadioTelescopeProject/.vs/RadioTelescopeProject/v16/Browse.VC.db-wal
 RadioTelescopeProject/.vs/RadioTelescopeProject/v16/Browse.VC.opendb
 RadioTelescopeProject/.vs/RadioTelescopeProject/v16/ipch/AutoPCH/dced1371d9e64bb6/RADIOTELESCOPEPROJECT.ipch
+RadioTelescopeProject/.vs/RadioTelescopeProject/v16/ipch/AutoPCH/393cc5cb3103cdb0/IMGUI_IMPL_WIN32.ipch
+RadioTelescopeProject/.vs/RadioTelescopeProject/v16/ipch/AutoPCH/51fadfb23573c8b7/MAIN.ipch
+RadioTelescopeProject/.vs/RadioTelescopeProject/v16/ipch/AutoPCH/543adbeab8a5c6a8/IMAGECOMPILER.ipch
+RadioTelescopeProject/.vs/RadioTelescopeProject/v16/ipch/AutoPCH/6b83171f099caf6f/IMGUI_SINGLE_FILE.ipch
+RadioTelescopeProject/.vs/RadioTelescopeProject/v16/ipch/AutoPCH/a61b5d6b188cbfd8/IMGUI_DRAW.ipch
+RadioTelescopeProject/.vs/RadioTelescopeProject/v16/ipch/AutoPCH/a9ea64660c8f93e0/IMGUI_IMPL_DX9.ipch
+RadioTelescopeProject/.vs/RadioTelescopeProject/v16/ipch/AutoPCH/bc24a921f61eac3a/MAIN.ipch
+RadioTelescopeProject/.vs/RadioTelescopeProject/v16/ipch/AutoPCH/c0685853901c9a40/IMAGECOMPILER.ipch
+RadioTelescopeProject/.vs/RadioTelescopeProject/v16/ipch/AutoPCH/c635882b17f21ad8/MAIN.ipch
+RadioTelescopeProject/.vs/RadioTelescopeProject/v16/ipch/AutoPCH/fb4793aeada5e26f/MAIN.ipch
+*.sarif
+*.tlog
+*.log
+RadioTelescopeProject/.editorconfig
