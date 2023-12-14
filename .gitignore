@@ -84,3 +84,8 @@ RadioTelescopeProject/.vs/RadioTelescopeProject/v16/ipch/AutoPCH/fb4793aeada5e26
 *.tlog
 *.log
 RadioTelescopeProject/.editorconfig
+*.ipch
+*.db
+RadioTelescopeProject/.vs/RadioTelescopeProject/v17/.suo
+RadioTelescopeProject/.vs/RadioTelescopeProject/v16/.suo
+RadioTelescopeProject/Debug/RadioTelescopeProject.exe.recipe

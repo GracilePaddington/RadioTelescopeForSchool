@@ -3,6 +3,9 @@
 #include <algorithm>
 #include <fstream>
 #include "CImg.h"
+#include <string>
+#include <chrono>
+#include <ctime> // trying a different time method... 
 //ImageCompiler class by Gaby 
 
 class ImageCompiler
@@ -79,8 +82,18 @@ public:
     }
 
 private:
-    void MakeABmpPicture() 
+    void MakeABmpPicture()
     {
+        
+        auto now = std::chrono::system_clock::now();
+        auto timestamp = std::chrono::system_clock::to_time_t(now);
+
+        
+        std::string timestampStr = std::to_string(timestamp); //trying this little number out, saw it on github when trawling around for a library that does this for me from here on out... This is pretty low friction though. 
+
+        // Create a unique filename with the timestamp
+        std::string filename = "RadioAntennaOutput_" + timestampStr + ".bmp";
+
         // Width and height of the image
         const int width = detectionAreaSentFromGUI.first;
         const int height = detectionAreaSentFromGUI.second;
@@ -100,9 +113,8 @@ private:
             }
         }
 
-        // Save the image to a BMP file
-        const char* filename = "RadioAntennaOutput.bmp";
-        image.save_bmp(filename);
+        // Save the image to the unique BMP file
+        image.save_bmp(filename.c_str());
 
         std::cout << "The BMP image is ready. Check " << filename << "." << std::endl;
     }

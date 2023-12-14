@@ -11,6 +11,7 @@
 #include <iostream> //for console
 #include <windows.h>
 #include "ImageCompiler.cpp" 
+#include "ArduinoSendbackControl.cpp"
 #include <string>
 #include <locale>
 #include <codecvt>
@@ -36,6 +37,7 @@ bool showWelcomeWindow = true; // bool for welcome window...
 bool firstTimeBeingShownGUI = true; 
 bool firstTimeBeingShownConfig = true; 
 bool isShowingAttributions = false; 
+ArduinoSendbackControl* arduinoControl = nullptr; //need a null version for later.. need this to be global though... 
 
 
 
@@ -152,8 +154,13 @@ public:
 class ConfigurationWindow
 {
 private:
+    bool submitButtonEnabled = true;
+    int enteredX = 0;
+    int enteredY = 0;
+
+public:
     ImageCompiler imageCompiler;
-    std::wstring selectedFilePath;  
+    std::wstring selectedFilePath;
     std::pair<int, int> resolution;
 
 
@@ -169,8 +176,8 @@ private:
         {
             do
             {
-                
-                txtFiles.push_back(std::wstring(findFileData.cFileName));
+                // Use cFileName directly
+                txtFiles.push_back(findFileData.cFileName);
             } while (FindNextFile(hFind, &findFileData) != 0);
 
             FindClose(hFind);
@@ -179,13 +186,17 @@ private:
         return txtFiles;
     }
 
-public:
+
+
+
+
+
     bool renderToBmpClicked = false;
     void Render()
     {
         firstTimeBeingShownConfig = false;
         // Set the project directory as the selected file path
-        selectedFilePath = L"C:/Users/Spencer/Documents/RadioTelescope/RadioTelescope/RadioTelescopeForSchool/FinalRadioTelescope";
+        selectedFilePath = L"C:\\RadioTelescopeForSchool\\RadioTelescopeProject"; //blank for executable location. 
 
         ImGui::Begin("Configuration Window");
 
@@ -200,13 +211,22 @@ public:
         if (ImGui::Combo("Select File", &selectedFileIndex,
             [](void* data, int idx, const char** out_text) {
                 auto& files = *static_cast<std::vector<std::wstring>*>(data);
-                *out_text = idx >= 0 && idx < files.size() ?
-                    std::wstring_convert<std::codecvt_utf8<wchar_t>>().to_bytes(files[idx]).c_str() :
-                    "No File";
-                return true;
+
+                // Only show files other than "LibrariesUsed" if it's present in the files vector
+                if (idx >= 0 && idx < files.size() && files[idx] != L"LibrariesUsed.txt") {
+                    static std::string convertedString; // Static to keep it alive
+                    convertedString = std::wstring_convert<std::codecvt_utf8<wchar_t>>().to_bytes(files[idx]);
+                    *out_text = convertedString.c_str();
+                    return true;
+                }
+
+                // Nothing but birds... though honestly I think the better option would have been to make a custom .txt wrapper or struct that also holds information 
+                // about the file itself... would be nice to have been able to "mark" what is non-editable and meant to be "for the program" rather than made by the program.
+                *out_text = "No File";
+                return false;
             }, static_cast<void*>(&txtFiles), txtFiles.size()))
         {
-          
+            // Your combo box logic...
         }
 
             // Button to render to BMP
@@ -214,6 +234,7 @@ public:
             {
                 renderToBmpClicked = true;
             }
+            
 
             // If Render to BMP button is clicked, ask for resolution
             if (renderToBmpClicked)
@@ -260,12 +281,47 @@ public:
                 }
             }
 
+          
+
+            ImGui::End();
+
+            ImGui::Begin("Arduino Scan Parameters");
+
+           
+            ImGui::InputInt("X", &enteredX);
+            ImGui::InputInt("Y", &enteredY);
+
+            
+            if (submitButtonEnabled)
+            {
+                if (ImGui::Button("Submit Command"))
+                {
+                    
+                    arduinoControl->sendPointData(enteredX, enteredY);
+
+                  
+                    submitButtonEnabled = false;
+                    enteredX = enteredY = 0;
+                }
+            }
+            else
+            {
+                ImGui::Text("Command submitted. Please wait...");
+            }
+
+           
+            if (txtFiles.size() > 0)
+            {
+               
+                submitButtonEnabled = true;
+            }
+
             ImGui::End();
     }
 };
 
 
-// Example function to initialize ImGui and DirectX
+
 void initializeImGuiAndDirectX(HWND hwnd, LPDIRECT3DDEVICE9 g_pd3dDevice) 
 {
     ImGui::CreateContext();
@@ -273,7 +329,7 @@ void initializeImGuiAndDirectX(HWND hwnd, LPDIRECT3DDEVICE9 g_pd3dDevice)
     ImGui_ImplDX9_Init(g_pd3dDevice);
 }
 
-// Example function to clean up ImGui and DirectX
+
 void cleanupImGuiAndDirectX() 
 {
     ImGui_ImplDX9_Shutdown();
@@ -290,27 +346,40 @@ void cleanupImGuiAndDirectX()
 
 
 
-void LaunchArduinoSerialPortConsole() //I give up on this... Can't seem to get it to work. Tried three or four different solutions, can't seem to figure out why it doesn't start. 
+void LaunchArduinoSerialPortConsole() //figured it out lol. 
 {
    
-   // LPCWSTR exeName = L"ArduinoSerialPortConsole";
+   LPCWSTR exeName = L"ArduinoSerialPortConsole";
 
     
-  //  HINSTANCE result = ShellExecute(NULL, L"open", exeName, NULL, NULL, SW_SHOWNORMAL); //try running it... 
+ HINSTANCE result = ShellExecute(NULL, L"open", exeName, NULL, NULL, SW_SHOWNORMAL); //try running it... 
 
- //   if (reinterpret_cast<int>(result) > 32)//check against 32? 
- //   {
+   if (reinterpret_cast<int>(result) > 32)//check against 32? no idea, never have seen this before, investigated it further. 
+       //32 was originally the flag to indicate success for an operation in Windows API. Intuition wasn't giving much to me. 
+  {
         
-  //      cout << "ArduinoSerialPortConsole.exe launched successfully." << endl;
-  //  }
- //   else
- //   {
- //       // An error occurred
- //      cerr << "Failed to launch ArduinoSerialPortConsole.exe. Please manually start the program from the Items folder in this software. We're sorry."<< endl;
-//    }
+     cout << "ArduinoSerialPortConsole.exe launched successfully." << endl; //debug console... 
+  }
+  else
+  {
+       // An error occurred
+     cerr << "Failed to launch ArduinoSerialPortConsole.exe. Please manually start the program from the Items folder in this software. We're sorry."<< endl;
+    }
 }
 
+void InitializeArduinoControl() //this is wicked, wicked goofy. There will be overwrites of information until I make a proper message queue. Ideally the Arduino will be quiet most of the time 
+//and I will trust that you will not go around clicking shit... 
+{
+    
+    const char* portName = "COM2";
 
+   
+     ArduinoSendbackControl arduinoControl("COM2"); //bam global arduinoControl is ready to go. 
+
+    
+     std::cout << "ArduinoSendbackControl initialized successfully, "<<portName<<" is operational" << std::endl;
+  
+}
 
 
 
@@ -322,7 +391,10 @@ void LaunchArduinoSerialPortConsole() //I give up on this... Can't seem to get i
 // Main code
 int main(int, char**)
 {
-
+    //most insane initialization on earth... 
+    LaunchArduinoSerialPortConsole();
+    InitializeArduinoControl(); 
+    //also no autoclose sorry just trying to get final functionalities in for my own health... Close the windows when you're done. 
 
     ConfigurationWindow configurationWindow;
     GUIWindow guiWindow("initial_image_path.jpg");
@@ -365,7 +437,7 @@ int main(int, char**)
 
     // Main loop
     bool done = false;
-    LaunchArduinoSerialPortConsole();
+    
     while (!done)
     {
 
