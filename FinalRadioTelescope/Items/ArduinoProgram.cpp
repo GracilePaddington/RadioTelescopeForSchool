@@ -1,3 +1,5 @@
+#ifdef DOXYGEN_SHOULD_SKIP_THIS
+
 #include <AccelStepper.h> //need this for stepper motor control. 
 
 //this program runs on ArduinoIDE for the Arduino control... 
@@ -176,3 +178,5 @@ void loop() //just an update loop...
 
     delay(100); //don't have enough arduino knowledge to know how much it can do per second... let's be safe and cut it there... 
 }
+
+#endif

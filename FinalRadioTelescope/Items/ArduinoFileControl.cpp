@@ -1,3 +1,5 @@
+#ifdef DOXYGEN_SHOULD_SKIP_THIS
+
 #include <iostream>
 #include <fstream>
 #include <Windows.h>//need this for serial connect.... 
@@ -116,3 +118,5 @@ int main()
 
     return 0;
 }
+
+#endif
